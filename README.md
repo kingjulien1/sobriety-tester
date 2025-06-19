@@ -165,9 +165,15 @@ implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:<version>")
 
 ---
 
-## 🧾 License
+## 🗓️ Future Dates & Deadlines
 
-This project is licensed under the [MIT License](LICENSE).
+Keep track of important project milestones:
+
+- 📢 **Project Pitch Presentation**: May 15, 2025  
+- 🚀 **Early Opportunity for Presentation**: June 24, 2025  
+- 🛠️ **Final Submission Deadline**: August 31, 2025  
+
+Make sure all implementation, testing, and documentation are finalized ahead of the final due date!
 
 ---
 
