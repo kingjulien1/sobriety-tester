@@ -14,6 +14,9 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
     private val _totalScore = MutableStateFlow(0)
     val totalScore: StateFlow<Int> = _totalScore
 
+    private val _lastTestScore = MutableStateFlow(0)
+    val lastTestScore: StateFlow<Int> = _lastTestScore
+
     init {
         viewModelScope.launch {
             scoreDao.getTotalScore().collect {
@@ -23,6 +26,7 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun addScore(points: Int) {
+        _lastTestScore.value = points
         viewModelScope.launch {
             scoreDao.insert(Score(points = points))
         }
