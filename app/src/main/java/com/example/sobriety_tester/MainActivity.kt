@@ -22,6 +22,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.material3.*
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -31,6 +32,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.compose.runtime.getValue
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -51,7 +53,16 @@ fun SobrietyTestApp(navController: NavHostController, viewModel: AppViewModel) {
         composable("reaction_test") { ReactionTestScreen(navController, viewModel) }
         composable("memory_test") { MemoryTestScreen(navController, viewModel) }
         composable("balance_test") { BalanceTestScreen(navController, viewModel) }
-        composable("score_screen") { ScoreScreen(navController, viewModel) }
+        composable("reaction_score_screen") {
+            val lastScore by viewModel.lastTestScore.collectAsState()
+            ScoreScreen(
+                navController = navController,
+                testName = "Reaction Test",
+                score = lastScore,
+                maxScore = MAX_SCORE_PER_DOT * REACTION_TEST_DOTS,
+                nextRoute = "memory_test"
+            )
+        }
         composable("final_result") { FinalResultScreen(viewModel) }
     }
 }

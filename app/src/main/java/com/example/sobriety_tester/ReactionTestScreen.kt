@@ -134,7 +134,7 @@ fun ReactionTestScreen(navController: NavController, viewModel: AppViewModel) {
                                     showNextDot()
                                 } else {
                                     viewModel.addScore(totalScore)
-                                    navController.navigate("score_screen")
+                                    navController.navigate("reaction_score_screen")
                                 }
                             }
                         }

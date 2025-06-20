@@ -17,16 +17,19 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
 
 @Composable
-fun ScoreScreen(navController: NavController, viewModel: AppViewModel) {
-    val lastScore by viewModel.lastTestScore.collectAsState()
-    val maxPossibleScore = MAX_SCORE_PER_DOT * REACTION_TEST_DOTS
-    val percentage = (lastScore / maxPossibleScore.toFloat()) * 100
+fun ScoreScreen(
+    navController: NavController,
+    testName: String,
+    score: Int,
+    maxScore: Int,
+    nextRoute: String
+) {
+    val percentage = (score / maxScore.toFloat()) * 100
 
-    BaseScreen(title = "Test Result") { padding ->
-        Column (
+    BaseScreen(title = "$testName Result") { padding ->
+        Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding)
@@ -35,7 +38,7 @@ fun ScoreScreen(navController: NavController, viewModel: AppViewModel) {
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
-                text = "Your Score: $lastScore",
+                text = "Your Score: $score / $maxScore",
                 style = MaterialTheme.typography.headlineLarge
             )
             Spacer(modifier = Modifier.height(16.dp))
@@ -44,11 +47,11 @@ fun ScoreScreen(navController: NavController, viewModel: AppViewModel) {
                 style = MaterialTheme.typography.titleMedium
             )
             Spacer(modifier = Modifier.height(40.dp))
-            Button (
-                onClick = { navController.navigate("memory_test") },
+            Button(
+                onClick = { navController.navigate(nextRoute) },
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Text("Continue to Memory Test")
+                Text("Continue")
             }
         }
     }
