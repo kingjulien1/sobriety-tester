@@ -22,7 +22,7 @@ import androidx.compose.runtime.setValue
 @Composable
 fun ScoreScreen(navController: NavController, viewModel: AppViewModel) {
     val lastScore by viewModel.lastTestScore.collectAsState()
-    val maxPossibleScore = 300 * 8 // 300 per dot, 8 dots
+    val maxPossibleScore = MAX_SCORE_PER_DOT * REACTION_TEST_DOTS
     val percentage = (lastScore / maxPossibleScore.toFloat()) * 100
 
     BaseScreen(title = "Test Result") { padding ->

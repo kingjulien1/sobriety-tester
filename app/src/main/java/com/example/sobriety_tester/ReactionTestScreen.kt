@@ -38,8 +38,11 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.DpOffset
 import kotlinx.coroutines.launch
 
+const val REACTION_TEST_DOTS = 3
+const val MAX_SCORE_PER_DOT = 300
+const val BASE_REACTION_TIME_MS = 3000
+const val SCORE_DIVISOR = 10
 
-private const val REACTION_TEST_DOTS = 8
 
 @Composable
 fun ReactionTestScreen(navController: NavController, viewModel: AppViewModel) {
@@ -115,7 +118,9 @@ fun ReactionTestScreen(navController: NavController, viewModel: AppViewModel) {
                         .background(Color(0xFF4CAF50))
                         .clickable {
                             val reactionTime = System.currentTimeMillis() - reactionStartTime
-                            val score = (3000 - reactionTime).coerceAtLeast(0).toInt() / 10
+                            val rawScore = ((BASE_REACTION_TIME_MS - reactionTime).coerceAtLeast(0)).toInt() / SCORE_DIVISOR
+                            val score = rawScore.coerceAtMost(MAX_SCORE_PER_DOT)
+
                             totalScore += score
                             currentTrial++
 
