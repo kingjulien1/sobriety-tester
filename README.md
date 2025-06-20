@@ -38,6 +38,41 @@ I don't have an android device, which is why Lea will be doing any sensor based 
 
 ---
 
+## 🎨 Design References & Similar Apps
+
+Here are some UI/UX inspirations and related applications that guided our design and implementation:
+
+- [Google Fit](https://play.google.com/store/apps/details?id=com.google.android.apps.fitness): Clean UI and real-time sensor integration.  
+- [Reflex Test Apps](https://play.google.com/store/search?q=reflex+test&c=apps): Simple reaction-based games for benchmarking.  
+- [Brain Training Apps (e.g., Lumosity)](https://www.lumosity.com/): For cognitive and memory test inspiration.  
+- [Balance Training Tools](https://play.google.com/store/search?q=balance+test+sensor&c=apps): Sensor-based exercises using the accelerometer.
+- [Reaction Test Pro](https://apps.apple.com/at/app/reaction-test-pro/id493360516?l=en-GB): A reaction test using different methods of reaction speed
+- [Beam Highlights](https://www.ridebeam.com/highlight/beam-introduces-rider-check-a-cognitive-test-for-enhanced-safety): A set of cognitive tests, each testing different cognition abilities, prettily designed
+- [Dribble Collection](https://dribbble.com/kingjulien1/collections/7497983-sobriety-tester) a small collection of design references & ideas for our tests & app components
+
+These references helped shape the interface, game flow, and scoring system with mobile ergonomics and clarity in mind.
+
+---
+
+## 💡 Miscellaneous Notes & Ideas
+
+- Tests are modular and can be expanded (e.g., add visual illusions, coordination games).  
+- Sound feedback per reaction or countdown tick would enhance immersion.  
+- Average performance across users could be compared if analytics were added.  
+- Could offer a "Night Mode" for dim environments.  
+- Long-term idea: a calibration test baseline to personalize scoring per user.
+- show result as points or as percentage?
+- show comparison to average test results - “You are better than 84% of testers”
+- show prompt depending on points - “You are (not) safe to drive” …
+- share count down components between tests
+- share same design of dots between tests
+- animate from count down into testing dot / from testing dot into count down / from testing dot into result points
+- show list of previous test results (save to database?)
+- Device capabilities (e.g., missing gyroscope) may influence test availability.  
+
+These thoughts are a mix of possible features and design considerations that may help extend the app into a broader cognitive tracking or training tool.
+
+---
 
 ## 📐 Architecture Overview
 
@@ -130,9 +165,15 @@ implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:<version>")
 
 ---
 
-## 🧾 License
+## 🗓️ Future Dates & Deadlines
 
-This project is licensed under the [MIT License](LICENSE).
+Keep track of important project milestones:
+
+- 📢 **Project Pitch Presentation**: May 15, 2025  
+- 🚀 **Early Opportunity for Presentation**: June 24, 2025  
+- 🛠️ **Final Submission Deadline**: August 31, 2025  
+
+Make sure all implementation, testing, and documentation are finalized ahead of the final due date!
 
 ---
 
