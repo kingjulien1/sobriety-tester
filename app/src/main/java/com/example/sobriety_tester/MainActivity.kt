@@ -103,12 +103,11 @@ fun StartScreen(navController: NavController) {
                 style = MaterialTheme.typography.bodyLarge
             )
             Spacer(modifier = Modifier.height(40.dp))
-            Button(
+            GreenActionButton(
                 onClick = { navController.navigate("reaction_test") },
+                text="Start Test",
                 modifier = Modifier.fillMaxWidth()
-            ) {
-                Text("Start Tests")
-            }
+            )
         }
     }
 }
