@@ -33,6 +33,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -54,13 +56,13 @@ fun SobrietyTestApp(navController: NavHostController, viewModel: AppViewModel) {
         composable("memory_test") { MemoryTestScreen(navController, viewModel) }
         composable("balance_test") { BalanceTestScreen(navController, viewModel) }
         composable("reaction_score_screen") {
-            val lastScore by viewModel.lastTestScore.collectAsState()
+            val score by viewModel.lastTestScore.collectAsState()
             ScoreScreen(
-                navController = navController,
-                testName = "Reaction Test",
-                score = lastScore,
+                score = score,
                 maxScore = MAX_SCORE_PER_DOT * REACTION_TEST_DOTS,
-                nextRoute = "memory_test"
+                nextRoute = "memory_test",
+                navController = navController,
+                title = "Reaction Test Score"
             )
         }
         composable("final_result") { FinalResultScreen(viewModel) }
@@ -68,46 +70,52 @@ fun SobrietyTestApp(navController: NavHostController, viewModel: AppViewModel) {
 }
 
 @Composable
-fun BaseScreen(
-    title: String,
-    content: @Composable (PaddingValues) -> Unit
-) {
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text(title) }
-            )
-        },
-        content = content
-    )
-}
-
-@Composable
 fun StartScreen(navController: NavController) {
-    BaseScreen(title = "Sobriety Tester") { padding ->
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(
+                start = 24.dp,
+                end = 24.dp,
+                top = 64.dp,   // pushes heading down
+                bottom = 32.dp // pushes button up
+            ),
+        verticalArrangement = Arrangement.SpaceBetween,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        // Heading area
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            Text(
+                text = "Sobriety Test",
+                style = MaterialTheme.typography.labelLarge.copy(color = Color.Gray)
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            Text(
+                text = "Welcome!\nYou will take 3 short tests.",
+                style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
+                textAlign = TextAlign.Center
+            )
+        }
+
+        // Centered content
         Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(padding)
-                .padding(24.dp),
+            modifier = Modifier.weight(1f),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
-                text = "Welcome! 🎉\nThis app will test your sobriety through 3 short tests.",
-                style = MaterialTheme.typography.headlineSmall
-            )
-            Spacer(modifier = Modifier.height(32.dp))
-            Text(
-                text = "You will perform:\n\n1️⃣ A Reaction Test\n2️⃣ A Memory Test\n3️⃣ A Balance Test",
+                text = "1️⃣ Reaction Test\n2️⃣ Memory Test\n3️⃣ Balance Test",
+                textAlign = TextAlign.Center,
                 style = MaterialTheme.typography.bodyLarge
             )
-            Spacer(modifier = Modifier.height(40.dp))
-            GreenActionButton(
-                onClick = { navController.navigate("reaction_test") },
-                text="Start Test",
-                modifier = Modifier.fillMaxWidth()
-            )
         }
+
+        // Bottom button
+        GreenActionButton(
+            text = "Start Tests",
+            onClick = { navController.navigate("reaction_test") },
+            modifier = Modifier
+                .fillMaxWidth()
+        )
     }
 }

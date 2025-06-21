@@ -83,3 +83,13 @@ fun CountdownTimer(
         )
     }
 }
+
+@Composable
+fun CountdownScreen(onCountdownComplete: () -> Unit) {
+    StandardLayout(
+        subheading = "Get Ready",
+        heading = "Test starts soon"
+    ) {
+        CountdownTimer(onFinished = onCountdownComplete)
+    }
+}

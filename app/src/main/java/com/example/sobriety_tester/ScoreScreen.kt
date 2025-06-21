@@ -17,42 +17,71 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import com.example.sobriety_tester.ui.theme.GreenPrimary
 
 @Composable
 fun ScoreScreen(
-    navController: NavController,
-    testName: String,
     score: Int,
     maxScore: Int,
-    nextRoute: String
+    nextRoute: String,
+    navController: NavController,
+    title: String = "Your Score",
+    subtitle: String = "Test Complete"
 ) {
-    val percentage = (score / maxScore.toFloat()) * 100
+    val percentage = (score.toFloat() / maxScore * 100).toInt().coerceIn(0, 100)
 
-    BaseScreen(title = "$testName Result") { padding ->
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(horizontal = 24.dp, vertical = 32.dp),
+        verticalArrangement = Arrangement.SpaceBetween,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        // Heading area
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            Text(
+                text = subtitle,
+                style = MaterialTheme.typography.labelLarge,
+                modifier = Modifier.padding(bottom = 4.dp)
+            )
+
+            Text(
+                text = title,
+                style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Bold),
+                modifier = Modifier.padding(bottom = 32.dp)
+            )
+        }
+
+        // Centered content
         Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(padding)
-                .padding(24.dp),
+            modifier = Modifier.weight(1f),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
-                text = "Your Score: $score / $maxScore",
-                style = MaterialTheme.typography.headlineLarge
+                text = "$score / $maxScore points",
+                style = MaterialTheme.typography.headlineMedium,
+                textAlign = TextAlign.Center
             )
-            Spacer(modifier = Modifier.height(16.dp))
+
+            Spacer(modifier = Modifier.height(8.dp))
+
             Text(
-                text = "Performance: ${"%.1f".format(percentage)}%",
-                style = MaterialTheme.typography.titleMedium
+                text = "$percentage%",
+                style = MaterialTheme.typography.titleLarge.copy(
+                    fontWeight = FontWeight.Bold,
+                    color = GreenPrimary
+                )
             )
-            Spacer(modifier = Modifier.height(40.dp))
-            Button(
-                onClick = { navController.navigate(nextRoute) },
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text("Continue")
-            }
         }
+
+        GreenActionButton(
+            text = "Next Test",
+            onClick = { navController.navigate(nextRoute) },
+            modifier = Modifier
+                .fillMaxWidth()
+        )
     }
 }
