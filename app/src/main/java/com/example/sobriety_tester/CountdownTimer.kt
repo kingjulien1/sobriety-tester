@@ -27,6 +27,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
+import com.example.sobriety_tester.ui.theme.GreenPrimary
 
 
 @Composable
@@ -72,7 +73,8 @@ fun CountdownTimer(
         CircularProgressIndicator(
             progress = animatedProgress.coerceIn(0f, 1f),
             strokeWidth = 8.dp,
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier.fillMaxSize(),
+            color = GreenPrimary
         )
         Text(
             text = if (currentSecond > 0) "$currentSecond" else "Go!",
