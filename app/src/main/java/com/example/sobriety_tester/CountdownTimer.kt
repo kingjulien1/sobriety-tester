@@ -15,6 +15,7 @@ import kotlinx.coroutines.delay
 
 import androidx.compose.animation.Animatable
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.animateIntAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -93,23 +94,27 @@ fun SimpleScoreIndicator(score: Int, total: Int) {
     val targetProgress = score.toFloat() / total.toFloat()
     val animatedProgress = remember { mutableStateOf(0f) }
 
-    /**
-     * because of the animation between screens, the animation of this progress bar will be over
-     * before the screen is even visible, making the animation not visible. The delay makes sure the
-     * component is rendered plus some delay to guarantee the animation is visible
-     */
+    // Trigger animation 1 second after render
     LaunchedEffect(Unit) {
-        delay(750)
+        delay(1000)
         animatedProgress.value = targetProgress
     }
 
+    // Animate progress for the CircularProgressIndicator
     val progress by animateFloatAsState(
         targetValue = animatedProgress.value,
         animationSpec = tween(durationMillis = 1000),
-        label = "delayedProgressAnimation"
+        label = "progressAnimation"
     )
 
-    val percentage = (targetProgress * 100).toInt()
+    // Animate the score number up to 'score'
+    val animatedScore by animateIntAsState(
+        targetValue = (animatedProgress.value * total).toInt(),
+        animationSpec = tween(durationMillis = 1000),
+        label = "scoreAnimation"
+    )
+
+    val percentage = (targetProgress * 100).toInt() // Simple static percentage
 
     Box(
         contentAlignment = Alignment.Center,
@@ -127,15 +132,7 @@ fun SimpleScoreIndicator(score: Int, total: Int) {
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
-                text = "points",
-                style = MaterialTheme.typography.bodyLarge.copy(
-                    fontWeight = FontWeight.Bold,
-                    color = Color.LightGray,
-                    textAlign = TextAlign.Center,
-                ),
-            )
-            Text(
-                text = "$score / $total",
+                text = "$animatedScore / $total",
                 style = MaterialTheme.typography.headlineSmall,
                 textAlign = TextAlign.Center,
                 fontWeight = FontWeight.Bold,
