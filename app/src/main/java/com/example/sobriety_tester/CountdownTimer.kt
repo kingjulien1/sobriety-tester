@@ -1,4 +1,3 @@
-
 package com.example.sobriety_tester
 
 import androidx.compose.animation.core.Animatable
@@ -27,7 +26,12 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.Dp
 import com.example.sobriety_tester.ui.theme.GreenPrimary
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.style.TextAlign
+import kotlin.math.roundToInt
 
 
 @Composable
@@ -67,29 +71,85 @@ fun CountdownTimer(
     }
 
     Box(
-        modifier = Modifier.size(150.dp),
+        modifier = Modifier.size(200.dp),
         contentAlignment = Alignment.Center
     ) {
         CircularProgressIndicator(
             progress = animatedProgress.coerceIn(0f, 1f),
-            strokeWidth = 8.dp,
+            strokeWidth = 20.dp,
             modifier = Modifier.fillMaxSize(),
             color = GreenPrimary
         )
         Text(
             text = if (currentSecond > 0) "$currentSecond" else "Go!",
-            style = MaterialTheme.typography.headlineLarge,
+            style = MaterialTheme.typography.headlineLarge.copy(fontWeight = FontWeight.Bold),
             modifier = Modifier.scale(scale.value)
         )
     }
 }
 
 @Composable
-fun CountdownScreen(onCountdownComplete: () -> Unit) {
-    StandardLayout(
-        subheading = "Get Ready",
-        heading = "Test starts soon"
+fun SimpleScoreIndicator(score: Int, total: Int) {
+    val targetProgress = score.toFloat() / total.toFloat()
+    val animatedProgress = remember { mutableStateOf(0f) }
+
+    /**
+     * because of the animation between screens, the animation of this progress bar will be over
+     * before the screen is even visible, making the animation not visible. The delay makes sure the
+     * component is rendered plus some delay to guarantee the animation is visible
+     */
+    LaunchedEffect(Unit) {
+        delay(750)
+        animatedProgress.value = targetProgress
+    }
+
+    val progress by animateFloatAsState(
+        targetValue = animatedProgress.value,
+        animationSpec = tween(durationMillis = 1000),
+        label = "delayedProgressAnimation"
+    )
+
+    val percentage = (targetProgress * 100).toInt()
+
+    Box(
+        contentAlignment = Alignment.Center,
+        modifier = Modifier.size(200.dp)
     ) {
-        CountdownTimer(onFinished = onCountdownComplete)
+        CircularProgressIndicator(
+            progress = progress,
+            strokeWidth = 20.dp,
+            modifier = Modifier.fillMaxSize(),
+            color = GreenPrimary
+        )
+
+        Column(
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(
+                text = "points",
+                style = MaterialTheme.typography.bodyLarge.copy(
+                    fontWeight = FontWeight.Bold,
+                    color = Color.LightGray,
+                    textAlign = TextAlign.Center,
+                ),
+            )
+            Text(
+                text = "$score / $total",
+                style = MaterialTheme.typography.headlineSmall,
+                textAlign = TextAlign.Center,
+                fontWeight = FontWeight.Bold,
+            )
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            Text(
+                text = "$percentage%",
+                style = MaterialTheme.typography.titleLarge.copy(
+                    fontWeight = FontWeight.Bold,
+                    color = GreenPrimary
+                )
+            )
+        }
     }
 }
