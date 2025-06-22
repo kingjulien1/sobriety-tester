@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
@@ -13,11 +12,21 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
 
+/**
+ * StandardLayout is a reusable composable that provides a consistent layout structure
+ * for screens in the sobriety tester app. It includes a subheading, a main heading,
+ * and a content area that can be filled with any composable content.
+ *
+ * @param subheading The text displayed below the main heading, typically used for context.
+ * @param heading The main title of the screen.
+ * @param modifier Optional modifier to customize the layout.
+ * @param content The content to be displayed in the main area of the layout.
+ */
 @Composable
 fun StandardLayout(
     subheading: String,

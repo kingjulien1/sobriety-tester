@@ -1,40 +1,34 @@
 package com.example.sobriety_tester
 
 import androidx.compose.animation.core.Animatable
-import androidx.compose.animation.core.tween
-import androidx.compose.foundation.layout.*
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
-import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.scale
-import androidx.compose.ui.unit.dp
-import kotlinx.coroutines.delay
-
-import androidx.compose.animation.Animatable
 import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.animateIntAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import com.example.sobriety_tester.ui.theme.GreenPrimary
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.style.TextAlign
-import kotlin.math.roundToInt
+import kotlinx.coroutines.delay
 
-
+/**
+ * CountdownTimer is a composable that displays a countdown timer
+ * with a circular progress indicator and animated text.
+ * It counts down from a specified number of seconds
+ * and triggers a callback when finished.
+ */
 @Composable
 fun CountdownTimer(
     seconds: Int = 3,
@@ -89,64 +83,18 @@ fun CountdownTimer(
     }
 }
 
+/**
+ * CountdownScreen displays a countdown timer with a heading and subheading.
+ * It uses the CountdownTimer composable and triggers a callback when the countdown finishes.
+ *
+ * @param onCountdownComplete Callback to invoke when the countdown completes.
+ */
 @Composable
-fun SimpleScoreIndicator(score: Int, total: Int) {
-    val targetProgress = score.toFloat() / total.toFloat()
-    val animatedProgress = remember { mutableStateOf(0f) }
-
-    // Trigger animation 1 second after render
-    LaunchedEffect(Unit) {
-        delay(1000)
-        animatedProgress.value = targetProgress
-    }
-
-    // Animate progress for the CircularProgressIndicator
-    val progress by animateFloatAsState(
-        targetValue = animatedProgress.value,
-        animationSpec = tween(durationMillis = 1000),
-        label = "progressAnimation"
-    )
-
-    // Animate the score number up to 'score'
-    val animatedScore by animateIntAsState(
-        targetValue = (animatedProgress.value * total).toInt(),
-        animationSpec = tween(durationMillis = 1000),
-        label = "scoreAnimation"
-    )
-
-    val percentage = (targetProgress * 100).toInt() // Simple static percentage
-
-    Box(
-        contentAlignment = Alignment.Center,
-        modifier = Modifier.size(200.dp)
+fun CountdownScreen(onCountdownComplete: () -> Unit) {
+    StandardLayout(
+        subheading = "Get Ready",
+        heading = "Test starts soon"
     ) {
-        CircularProgressIndicator(
-            progress = progress,
-            strokeWidth = 20.dp,
-            modifier = Modifier.fillMaxSize(),
-            color = GreenPrimary
-        )
-
-        Column(
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Text(
-                text = "$animatedScore / $total",
-                style = MaterialTheme.typography.headlineSmall,
-                textAlign = TextAlign.Center,
-                fontWeight = FontWeight.Bold,
-            )
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            Text(
-                text = "$percentage%",
-                style = MaterialTheme.typography.titleLarge.copy(
-                    fontWeight = FontWeight.Bold,
-                    color = GreenPrimary
-                )
-            )
-        }
+        CountdownTimer(onFinished = onCountdownComplete)
     }
 }
