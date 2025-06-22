@@ -40,10 +40,11 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.DpOffset
 import com.example.sobriety_tester.ui.theme.GreenPrimary
 import kotlinx.coroutines.launch
+import kotlin.math.pow
 
 const val REACTION_TEST_DOTS = 3
 const val MAX_SCORE_PER_DOT = 100
-const val BASE_REACTION_TIME_MS = 1000
+const val MAX_REACTION_TIME_MS = 2000f
 const val SCORE_DIVISOR = 10
 
 @Composable
@@ -124,10 +125,9 @@ fun ReactionTestScreen(navController: NavController, viewModel: AppViewModel) {
                             .clickable {
                                 val reactionTime = System.currentTimeMillis() - reactionStartTime
 
-                                val MAX_REACTION_TIME_MS = 1500f
                                 val clampedTime = reactionTime.toFloat().coerceIn(0f, MAX_REACTION_TIME_MS)
 
-                                val score = ((1f - (clampedTime / MAX_REACTION_TIME_MS)) * MAX_SCORE_PER_DOT).toInt()
+                                val score = ((1f - (clampedTime / MAX_REACTION_TIME_MS)) * 50 + 50).toInt()
                                 totalScore += score
                                 currentTrial++
 
