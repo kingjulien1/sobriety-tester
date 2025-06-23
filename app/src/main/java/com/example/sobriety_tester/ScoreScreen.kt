@@ -33,6 +33,13 @@ import kotlinx.coroutines.delay
  * ScoreScreen displays the user's score after completing a test.
  * It shows the score, the maximum possible score, and the relative percentage
  * and provides a button to navigate to the next test.
+ *
+ * @param score The user's score to display.
+ * @param maxScore The maximum possible score for the test.
+ * @param nextRoute The route to navigate to when the user clicks the button.
+ * @param navController The NavController to handle navigation.
+ * @param title The title of the screen, default is "Your Score".
+ * @param subtitle The subtitle of the screen, default is "Test Complete".
  */
 @Composable
 fun ScoreScreen(
@@ -50,7 +57,7 @@ fun ScoreScreen(
         verticalArrangement = Arrangement.SpaceBetween,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        // Heading area
+        // header area with title and subtitle
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Text(
                 text = subtitle,
@@ -64,8 +71,7 @@ fun ScoreScreen(
                 modifier = Modifier.padding(bottom = 32.dp)
             )
         }
-
-        // Centered content
+        // content area with score indicator
         Column(
             modifier = Modifier.weight(1f),
             verticalArrangement = Arrangement.Center,
@@ -92,12 +98,15 @@ fun ScoreScreen(
  */
 @Composable
 fun SimpleScoreIndicator(score: Int, total: Int) {
-    // ensure score is not negative and total is positive
+    // calculate the target progress based on score and total
     val targetProgress = score.toFloat() / total.toFloat()
     val animatedProgress = remember { mutableStateOf(0f) }
 
-    // Trigger animation 1 second after render
+    // trigger animation 1 second after render
     LaunchedEffect(Unit) {
+        // wait for 1 second before starting the animation
+        // because of animations between screens, we want to give a little time
+        // so the user can see the (entire) animation
         delay(1000)
         animatedProgress.value = targetProgress
     }
@@ -118,7 +127,7 @@ fun SimpleScoreIndicator(score: Int, total: Int) {
         label = "scoreAnimation"
     )
 
-// simplified percentage calculation
+    // simplified percentage calculation rounded to the nearest integer
     val percentage = (targetProgress * 100).toInt()
 
     Box(
@@ -155,4 +164,3 @@ fun SimpleScoreIndicator(score: Int, total: Int) {
         }
     }
 }
-

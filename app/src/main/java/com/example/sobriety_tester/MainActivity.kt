@@ -37,6 +37,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             val navController = rememberNavController()
+            // initialize the ViewModel for managing app state
             val appViewModel: AppViewModel = viewModel()
 
             SobrietyTestApp(navController, appViewModel)
@@ -60,9 +61,12 @@ fun SobrietyTestApp(navController: NavHostController, viewModel: AppViewModel) {
         composable("memory_test") { MemoryTestScreen(navController, viewModel) }
         composable("balance_test") { BalanceTestScreen(navController, viewModel) }
         composable("reaction_score_screen") {
+            // collect the last test score from the ViewModel
+            // for the score screen to display the results of the reaction test
             val score by viewModel.lastTestScore.collectAsState()
             ScoreScreen(
                 score = score,
+                // calculate the maximum score based on the number of dots and the score per dot
                 maxScore = MAX_SCORE_PER_DOT * REACTION_TEST_DOTS,
                 nextRoute = "memory_test",
                 navController = navController,
@@ -85,14 +89,12 @@ fun StartScreen(navController: NavController) {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(
-                start = 24.dp, end = 24.dp, top = 64.dp,   // pushes heading down
-                bottom = 32.dp // pushes button up
-            ),
+            // Provides padding around the content to ensure it doesn't touch the edges of the screen
+            .padding(start = 24.dp, end = 24.dp, top = 64.dp, bottom = 32.dp),
         verticalArrangement = Arrangement.SpaceBetween,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        // Heading area
+        // heading area
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Text(
                 text = "Sobriety Test",
@@ -105,8 +107,7 @@ fun StartScreen(navController: NavController) {
                 textAlign = TextAlign.Center
             )
         }
-
-        // Centered content
+        // content area
         Column(
             modifier = Modifier.weight(1f),
             verticalArrangement = Arrangement.Center,
@@ -118,8 +119,7 @@ fun StartScreen(navController: NavController) {
                 style = MaterialTheme.typography.bodyLarge
             )
         }
-
-        // Bottom button
+        // bottom area with action button
         GreenActionButton(
             text = "Start Tests",
             onClick = { navController.navigate("reaction_test") },

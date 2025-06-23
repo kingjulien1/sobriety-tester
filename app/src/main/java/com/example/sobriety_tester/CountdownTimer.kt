@@ -28,34 +28,46 @@ import kotlinx.coroutines.delay
  * with a circular progress indicator and animated text.
  * It counts down from a specified number of seconds
  * and triggers a callback when finished.
+ *
+ * @param seconds The number of seconds to count down from. Default is 3 seconds.
+ * @param onFinished Callback function to invoke when the countdown reaches zero.
  */
 @Composable
 fun CountdownTimer(
     seconds: Int = 3,
     onFinished: () -> Unit
 ) {
+    // state variables to track the current second and elapsed time
     var currentSecond by remember { mutableStateOf(seconds) }
     var elapsedMillis by remember { mutableStateOf(0f) }
 
+    // animate the progress of the circular indicator based on elapsed time
     val animatedProgress by animateFloatAsState(
         targetValue = elapsedMillis / (seconds * 1000f),
         animationSpec = tween(durationMillis = 100),
         label = "progress"
     )
 
-    // Text animation
+    // animatable scale for the text to create a pulse effect
     val scale = remember { Animatable(1f) }
 
+    // use LaunchedEffect to run the countdown logic when the composable is first rendered
+    // it will update the current second and animate the text scaling
     LaunchedEffect(Unit) {
         val totalMillis = seconds * 1000
         val tickInterval = 100L
 
         while (elapsedMillis < totalMillis) {
+            // this delay simulates the countdown tick
             delay(tickInterval)
+            // this will ensure the countdown is smooth and updates every tickInterval milliseconds
             elapsedMillis += tickInterval
+            // calculate the current second based on elapsed time
             val sec = seconds - (elapsedMillis / 1000).toInt()
+            // update the current second if it has changed
             if (sec != currentSecond) {
                 currentSecond = sec
+                // animate the scale of the text to create a pulse effect
                 scale.snapTo(1.3f)
                 scale.animateTo(1f, animationSpec = tween(300))
             }
@@ -64,7 +76,6 @@ fun CountdownTimer(
         currentSecond = 0
         onFinished()
     }
-
     Box(
         modifier = Modifier.size(200.dp),
         contentAlignment = Alignment.Center

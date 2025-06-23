@@ -28,8 +28,14 @@ import com.example.sobriety_tester.ui.theme.GreenPrimary
 import kotlinx.coroutines.launch
 import kotlin.random.Random
 
+// this is the number of dots that will appear during the reaction test
+// users must press all of them to complete the test
 const val REACTION_TEST_DOTS = 13
+// this is the maximum score that can be achieved in the reaction test per dot
+// the score is calculated based on the reaction time relative to the dot's appearance
 const val MAX_SCORE_PER_DOT = 100
+// this is the maximum reaction time in milliseconds
+// that will be considered for scoring. Any reaction time above this will be clamped to this value.
 const val MAX_REACTION_TIME_MS = 2000f
 
 /**
@@ -37,6 +43,9 @@ const val MAX_REACTION_TIME_MS = 2000f
  * Users must press $REACTION_TEST_DOTS number of randomly appearing dots on the screen
  * A score will be calculated based on the average speed the dots had been pressed relative to their appearance
  * After test completion, results will be added to the viewmodel and displayed on the score screen
+ *
+ * @param navController The NavController to handle navigation between screens.
+ * @param viewModel The ViewModel to manage app state and data.
  */
 @Composable
 fun ReactionTestScreen(navController: NavController, viewModel: AppViewModel) {
@@ -89,7 +98,11 @@ fun ReactionTestScreen(navController: NavController, viewModel: AppViewModel) {
         val x = marginPx + Random.nextFloat() * maxX
         val y = marginPx + Random.nextFloat() * maxY
 
+        // update the dot's position and reset animations
+        // using Offset to store the position in pixels
         dotOffset = Offset(x, y)
+
+        // reset the trial start time
         reactionStartTime = System.currentTimeMillis()
         dotVisible = true
 
@@ -103,11 +116,13 @@ fun ReactionTestScreen(navController: NavController, viewModel: AppViewModel) {
     }
 
     if (!testStarted) {
+        // show a countdown before starting the test
         CountdownScreen {
             testStarted = true
             showNextDot()
         }
     } else {
+        // main reaction test screen layout
         StandardLayout(
             subheading = "Test 1 of 3",
             heading = "Follow the green dot"
@@ -128,8 +143,10 @@ fun ReactionTestScreen(navController: NavController, viewModel: AppViewModel) {
                             .clickable {
                                 // record reaction time and calculate score
                                 val reactionTime = System.currentTimeMillis() - reactionStartTime
+                                // clamp the reaction time to the maximum allowed
                                 val clampedTime =
                                     reactionTime.toFloat().coerceIn(0f, MAX_REACTION_TIME_MS)
+                                // calculate score based on reaction time, the faster the reaction, the higher the score
                                 val score =
                                     ((1f - (clampedTime / MAX_REACTION_TIME_MS)) * 50 + 50).toInt()
                                 totalScore += score
@@ -137,6 +154,7 @@ fun ReactionTestScreen(navController: NavController, viewModel: AppViewModel) {
 
                                 // reset animations and animate the dot out
                                 scope.launch {
+                                    // reset the dot visibility and animations after a short delay
                                     scale.animateTo(0f, tween(200))
                                     alpha.animateTo(0f, tween(200))
                                     dotVisible = false

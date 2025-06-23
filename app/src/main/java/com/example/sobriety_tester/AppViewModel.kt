@@ -12,8 +12,12 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 /**
- * ViewModel for managing the state of the Sobriety Tester app.
- * Handles scores for different tests and provides methods to record and persist scores.
+ * Enum class representing the different types of tests in the Sobriety Tester app.
+ * Each test type corresponds to a specific skill being evaluated.
+ *
+ * @property Reaction Represents the reaction time test.
+ * @property Memory Represents the memory test.
+ * @property Balance Represents the balance test.
  */
 enum class TestType {
     Reaction,
@@ -27,6 +31,8 @@ enum class TestType {
  * this ViewModel is tied to the application lifecycle.
  * It holds the scores for individual tests (reaction, memory, balance),
  * the last completed test score, and the total score across all tests.
+ *
+ * @param application The Application context, used to access the database.
  */
 class AppViewModel(application: Application) : AndroidViewModel(application) {
     private val scoreDao = AppDatabase.getDatabase(application).scoreDao()
