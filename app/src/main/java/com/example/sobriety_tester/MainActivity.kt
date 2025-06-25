@@ -73,6 +73,19 @@ fun SobrietyTestApp(navController: NavHostController, viewModel: AppViewModel) {
                 title = "Reaction Test Score"
             )
         }
+        composable("memory_score_screen") {
+            // collect the last test score from the ViewModel
+            // for the score screen to display the results of the reaction test
+            val score by viewModel.lastTestScore.collectAsState()
+            ScoreScreen(
+                score = score,
+                // calculate the maximum score based on the number of dots and the score per dot
+                maxScore = MAX_MEMORY_SCORE,
+                nextRoute = "balance_test",
+                navController = navController,
+                title = "Memory Test Score"
+            )
+        }
         composable("final_result") { FinalResultScreen(viewModel) }
     }
 }

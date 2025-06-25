@@ -30,7 +30,7 @@ import kotlin.random.Random
 
 // this is the number of dots that will appear during the reaction test
 // users must press all of them to complete the test
-const val REACTION_TEST_DOTS = 13
+const val REACTION_TEST_DOTS = 3
 // this is the maximum score that can be achieved in the reaction test per dot
 // the score is calculated based on the reaction time relative to the dot's appearance
 const val MAX_SCORE_PER_DOT = 100
