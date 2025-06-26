@@ -2,8 +2,10 @@ package com.example.sobriety_tester
 
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.absoluteOffset
 import androidx.compose.foundation.layout.fillMaxSize
@@ -20,6 +22,8 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
@@ -31,12 +35,16 @@ import kotlin.random.Random
 // this is the number of dots that will appear during the reaction test
 // users must press all of them to complete the test
 const val REACTION_TEST_DOTS = 3
+
 // this is the maximum score that can be achieved in the reaction test per dot
 // the score is calculated based on the reaction time relative to the dot's appearance
 const val MAX_SCORE_PER_DOT = 100
+
 // this is the maximum reaction time in milliseconds
 // that will be considered for scoring. Any reaction time above this will be clamped to this value.
 const val MAX_REACTION_TIME_MS = 2000f
+
+const val DOT_SWEEP_DURATION_MS = 1000
 
 /**
  * this test measures reaction time.
@@ -70,6 +78,7 @@ fun ReactionTestScreen(navController: NavController, viewModel: AppViewModel) {
     // animations for dot appearance
     val scale = remember { Animatable(0f) }
     val alpha = remember { Animatable(0f) }
+    val sweepProgress = remember { Animatable(0f) }
 
     // ui dimensions and padding for the dot and layout
     val dotSize = 80.dp
@@ -108,9 +117,8 @@ fun ReactionTestScreen(navController: NavController, viewModel: AppViewModel) {
 
         // animate the dot's appearance
         scope.launch {
-            scale.snapTo(0f)
-            alpha.snapTo(0f)
-            scale.animateTo(1f, tween(300))
+            sweepProgress.snapTo(0f)
+            sweepProgress.animateTo(1f, tween(durationMillis = DOT_SWEEP_DURATION_MS))
             alpha.animateTo(1f, tween(300))
         }
     }
@@ -125,22 +133,21 @@ fun ReactionTestScreen(navController: NavController, viewModel: AppViewModel) {
         // main reaction test screen layout
         StandardLayout(
             subheading = "Test 1 of 3",
-            heading = "Follow the green dot"
+            heading = "tap the green dot as fast as you can",
         ) {
             Box(modifier = Modifier.fillMaxSize()) {
                 if (dotVisible) {
-                    Box(
+                    Canvas(
                         modifier = Modifier
                             .size(dotSize)
                             .absoluteOffset(
                                 x = with(density) { dotOffset.x.toDp() },
                                 y = with(density) { dotOffset.y.toDp() }
                             )
-                            .scale(scale.value)
-                            .alpha(alpha.value)
-                            .clip(CircleShape)
-                            .background(GreenPrimary)
-                            .clickable {
+                            .clickable(
+                                interactionSource = remember { MutableInteractionSource()  },
+                                indication = null
+                            ) {
                                 // record reaction time and calculate score
                                 val reactionTime = System.currentTimeMillis() - reactionStartTime
                                 // clamp the reaction time to the maximum allowed
@@ -155,8 +162,6 @@ fun ReactionTestScreen(navController: NavController, viewModel: AppViewModel) {
                                 // reset animations and animate the dot out
                                 scope.launch {
                                     // reset the dot visibility and animations after a short delay
-                                    scale.animateTo(0f, tween(200))
-                                    alpha.animateTo(0f, tween(200))
                                     dotVisible = false
 
                                     if (currentTrial == REACTION_TEST_DOTS) {
@@ -167,7 +172,18 @@ fun ReactionTestScreen(navController: NavController, viewModel: AppViewModel) {
                                     } else showNextDot()
                                 }
                             }
-                    )
+                    ) {
+                        drawArc(
+                            color = GreenPrimary,
+                            startAngle = -90f,
+                            sweepAngle = 360f * sweepProgress.value,
+                            useCenter = false,
+                            style = Stroke(
+                                width = size.minDimension * 0.2f,
+                                cap = StrokeCap.Round
+                            )
+                        )
+                    }
                 }
             }
         }
