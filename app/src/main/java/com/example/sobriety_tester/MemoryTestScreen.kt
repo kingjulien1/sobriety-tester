@@ -235,6 +235,7 @@ fun MemoryTestScreen(navController: NavController, viewModel: AppViewModel) {
     // if the test has not started yet, show a countdown screen
     if (!testStarted) {
         CountdownScreen {
+            // start the first round after countdown completion
             testStarted = true
             startNewRound()
         }
