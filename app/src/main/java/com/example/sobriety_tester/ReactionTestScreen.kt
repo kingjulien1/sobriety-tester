@@ -44,6 +44,7 @@ const val MAX_SCORE_PER_DOT = 100
 // that will be considered for scoring. Any reaction time above this will be clamped to this value.
 const val MAX_REACTION_TIME_MS = 2000f
 
+// this is the duration in milliseconds  the dot's sweep animation will take
 const val DOT_SWEEP_DURATION_MS = 1000
 
 /**
@@ -126,25 +127,28 @@ fun ReactionTestScreen(navController: NavController, viewModel: AppViewModel) {
     if (!testStarted) {
         // show a countdown before starting the test
         CountdownScreen {
+            // start the reaction test after countdown
             testStarted = true
             showNextDot()
         }
     } else {
-        // main reaction test screen layout
         StandardLayout(
             subheading = "Test 1 of 3",
             heading = "tap the green dot as fast as you can",
         ) {
             Box(modifier = Modifier.fillMaxSize()) {
+                // check if the dot is visible and animate it in if it is
                 if (dotVisible) {
                     Canvas(
                         modifier = Modifier
                             .size(dotSize)
+                            // center the dot in the box
                             .absoluteOffset(
                                 x = with(density) { dotOffset.x.toDp() },
                                 y = with(density) { dotOffset.y.toDp() }
                             )
                             .clickable(
+                                // hide the ripple effect and other interactions when clicking the canvas
                                 interactionSource = remember { MutableInteractionSource()  },
                                 indication = null
                             ) {
@@ -178,6 +182,7 @@ fun ReactionTestScreen(navController: NavController, viewModel: AppViewModel) {
                             startAngle = -90f,
                             sweepAngle = 360f * sweepProgress.value,
                             useCenter = false,
+                            // draw the arc with a stroke style
                             style = Stroke(
                                 width = size.minDimension * 0.2f,
                                 cap = StrokeCap.Round

@@ -34,6 +34,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlin.random.Random
 
+// dot radius in dp
 val DOT_SIZE = 80.dp
 
 // amount of levels in the memory test, each level adds one more dot to the sequence & ends with $TOTAL_ROUNDS dos
@@ -50,10 +51,10 @@ const val BOTTOM_PADDING = 500
  * MemoryTestScreen - a memory game composable that displays a sequence of animated dots
  * for the user to memorize and then reproduce in order. Tapping in the wrong order ends the test.
  * dots will appear in random positions on the screen in a sequence, each dot will animate a stroke sweep and disappears after a short delay.
- * The user must tap the dots in the same order they appeared, correct taps will make dots visible again and progress to the next round.
+ * the user must tap the dots in the same order they appeared, correct taps will make dots visible again and progress to the next round.
  *
- * @param navController Used to navigate to the score screen
- * @param viewModel Shared ViewModel for recording and storing test results
+ * @param navController used to navigate to the score screen
+ * @param viewModel shared ViewModel for recording and storing test results
  */
 @Composable
 fun MemoryTestScreen(navController: NavController, viewModel: AppViewModel) {
@@ -95,11 +96,11 @@ fun MemoryTestScreen(navController: NavController, viewModel: AppViewModel) {
     val dotSweepMap = remember { mutableStateMapOf<Offset, Float>() }
 
     /**
-     * Generates a random dot position on the screen, avoiding overlap with existing dots.
-     * It will retry up to 100 times to find a valid position that does not overlap with existing dots.
+     * generates a random dot position on the screen, avoiding overlap with existing dots.
+     * it will retry up to 100 times to find a valid position that does not overlap with existing dots.
      *
-     * @param existingDots List of already placed dots to avoid overlap.
-     * @return A random Offset representing the position of the new dot.
+     * @param existingDots list of already placed dots to avoid overlap.
+     * @return a random Offset representing the position of the new dot.
      */
     fun generateRandomDotAvoidingOverlap(existingDots: List<Offset>): Offset {
         // screen dimensions and padding in pixels for calculating valid positions
@@ -131,19 +132,23 @@ fun MemoryTestScreen(navController: NavController, viewModel: AppViewModel) {
     }
 
     /**
-     * Showcases the sequence of dots of the current level  by animating each dot in the sequence.
-     * It highlights each dot in the sequence, animates a stroke sweep effect,
+     * showcases the sequence of dots of the current level  by animating each dot in the sequence.
+     * it highlights each dot in the sequence, animates a stroke sweep effect,
      * and waits for a short delay before moving to the next dot.
      */
     fun playSequence() {
         showingSequence = true
+        // turn off user input while the sequence is being shown
         userTurn = false
+        // clear previous player taps from the last round
         playerInput.clear()
 
         // reset the dot sweep map animation values to start fresh
         scope.launch {
             for (dot in sequence) {
+                // set the current dot to be highlighted and animate its stroke sweep
                 highlightedDot = dot
+                // reset the sweep value for the current dot to start the animation from 0
                 dotSweepMap[dot] = 0f
 
                 val anim = Animatable(0f)
@@ -174,8 +179,7 @@ fun MemoryTestScreen(navController: NavController, viewModel: AppViewModel) {
      * and navigates to the score screen with the final score.
      */
     fun startNewRound() {
-        // reset the highlighted dot and player input for the new round
-        // this will clear the previous round's data and prepare for the next one
+        // check if the last level has been completed and if so, terminate the test
         if (currentRound > TOTAL_ROUNDS) {
             isCompleted = true
             // record the final score in the ViewModel and navigate to the score screen
@@ -224,8 +228,9 @@ fun MemoryTestScreen(navController: NavController, viewModel: AppViewModel) {
                 startNewRound()
             }
         } else {
-            // tap was incorrect, test is terminated, score is recorded and user navigates to score screen
+            // tap was incorrect, test is terminated
             isCompleted = true
+            // record the final score in the ViewModel and navigate to the score screen
             viewModel.recordTestScore(TestType.Memory, score)
             viewModel.persistScore(score)
             navController.navigate("memory_score_screen")
@@ -248,6 +253,7 @@ fun MemoryTestScreen(navController: NavController, viewModel: AppViewModel) {
                 modifier = Modifier
                     .fillMaxSize()
                     .pointerInput(userTurn) {
+                        // listen for user taps on the screen
                         detectTapGestures { tapOffset -> handleUserTap(tapOffset) }
                     }
             ) {
@@ -256,6 +262,7 @@ fun MemoryTestScreen(navController: NavController, viewModel: AppViewModel) {
                     Canvas(
                         modifier = Modifier
                             .size(DOT_SIZE)
+                            // calculate the absolute position of the dot based on its coordinates
                             .absoluteOffset(
                                 x = with(density) { (dot.x - dotRadiusPx).toDp() },
                                 y = with(density) { (dot.y - dotRadiusPx).toDp() }
@@ -270,7 +277,9 @@ fun MemoryTestScreen(navController: NavController, viewModel: AppViewModel) {
                         val hasAlreadyBeenTappedCorrectly =
                             tappedDots.any { it.x == dot.x && it.y == dot.y }
 
-                        //
+                        // check if the current dot is the one currently highlighted in the sequence
+                        // or if the sweep is greater than 0 (meaning it is currently animating)
+                        // or if it has been already tapped correctly by the user
                         if ((dot == highlightedDot || sweep > 0f) || hasAlreadyBeenTappedCorrectly) {
                             // draw the dot if it is currently showing the sequence
                             // or if it has been already tapped correctly by the user
