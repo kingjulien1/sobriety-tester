@@ -73,63 +73,61 @@ These references helped shape the interface, game flow, and scoring system with 
 These thoughts are a mix of possible features and design considerations that may help extend the app into a broader cognitive tracking or training tool.
 
 ---
+## 🏗️ Architecture Overview
 
-## 📐 Architecture Overview
+### 1. **MVVM + Jetpack Compose**
 
-```
-MainActivity
-   └── Jetpack Compose UI
-        ├── Navigation (NavHost)
-        ├── Screens (Reaction, Memory, Balance, Score, Result)
-        └── AppViewModel (shared ViewModel)
+- **Model–View–ViewModel (MVVM)** pattern:
+  - **ViewModel (`AppViewModel`)** handles all test logic and app‑wide state (reaction, memory, balance scores), using `MutableStateFlow` and `StateFlow`.
+  - **View (Compose UI)** is fully declarative with no underlying XML layouts.
+  - **Model** is comprised of test logic and persistence via Room.
 
-AppViewModel
-   └── Business logic and score management
-        └── Room Database (ScoreDao, Score Entity)
-```
+### 2. **State Management**
+- **Per-test score flows**: `reactionScore`, `memoryScore`, and `balanceScore` each `MutableStateFlow<Int>`.
+- **Combined `totalScore`** uses `combine(...)` over the three flows for reactive totals.
+- **`lastTestScore` flow** stores the most recent test result for display on the `ScoreScreen`.
+- **Actions**:
+  - `recordTestScore(testType: TestType, score: Int)` updates the related test and sets `lastTestScore`.
+  - `persistScore(score: Int)` records each test score in the database via `Room`.
 
-### Layers
+### 3. **Test Screen Logic (Reaction, Memory, Balance)**
+- Each test screen:
+  1. Shows a **3‑second countdown** using `CountdownScreen`.
+  2. Executes its game logic (dot tapping, timing, motion) inside a `Composable`.
+  3. Calculates score based on user performance.
+  4. Calls `recordTestScore(...)` and optionally `persistScore(...)` in `AppViewModel`.
+  5. Navigates to a `ScoreScreen`, which reads from `lastTestScore`.
 
-- **UI Layer**: Built with Jetpack Compose and Material 3
-- **ViewModel**: Handles state, side-effects, and DB interaction
-- **Data Layer**: Room database stores all test scores
+### 4. **Reusable Layouts**
+- **`StandardLayout`**: A structured header + centered content design component that ensures consistent layout across all test screens.
+- **`GreenActionButton`**: Shared styled button for navigation and test actions.
+
+### 5. **Navigation**
+- Using **Jetpack Compose Navigation**.
+- Fixed routes for each test and score screen:
+  - `reaction_test`, `memory_test`, `balance_test`
+  - `reaction_score_screen`, `memory_score_screen`, `balance_score_screen`
+- Minimal use of route parameters, relying instead on `AppViewModel` for passing scores.
+
+### 6. **Persistence with Room**
+- Scores are optionally persisted via `Room` using:
+  - `ScoreDao.insert(Score(points = ...))`
+  - `ScoreDao.getTotalScore()` to track overall progress/history
+- Toggle persistence via `persistScore(...)` in the ViewModel.
+
+### 7. **Custom Composable Patterns**
+- Game UIs utilize pure Compose, e.g.:
+  - **ReactionTestScreen**: random dot tap with animation, scoring based on tap speed.
+  - **MemoryTestScreen**: animated sequence display, user-tap comparisons, visual dot feedback.
+  - **BalanceTestScreen**: (in development) likely uses `SensorManager` and custom composables to simulate balance challenge.
 
 ---
 
-## 🏗️ Implementation Details
-
-### 🔄 Navigation
-
-Navigation is handled using `androidx.navigation:navigation-compose`. The app has the following routes:
-- `reaction_test`
-- `memory_test`
-- `balance_test`
-- `score_screen`
-- `final_result`
-
-All screens are registered in the `NavHost` via `NavController`.
-
-### 🧠 State Management
-
-The `AppViewModel` exposes:
-```kotlin
-val totalScore: StateFlow<Int>
-```
-
-To track cumulative points, and uses:
-```kotlin
-fun addScore(points: Int)
-```
-
-For recording test results using Room.
-
-### 💽 Room Database
-
-- **Entity**: `Score`
-- **DAO**: `ScoreDao`
-- **Database**: `AppDatabase`
-
-Room is configured as a singleton database and is accessed via `getDatabase(context)`.
+**📌 Summary**
+- **MVVM** with `StateFlow` ViewModel & Compose UI separation  
+- Logical test pipelines: countdown → gameplay → scoring → navigation  
+- **Reusable design systems** and layout components  
+- Optional **Room** persistence for test history  
 
 ---
 
