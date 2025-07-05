@@ -74,6 +74,9 @@ These thoughts are a mix of possible features and design considerations that may
 
 ---
 ## 🏗️ Architecture Overview
+<p align="center">
+  <img src="architecture.png" alt="Architecture Diagram" width="600"/>
+</p>
 
 ### 1. **MVVM + Jetpack Compose**
 
