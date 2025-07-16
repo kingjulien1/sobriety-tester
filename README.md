@@ -1,6 +1,6 @@
 # 🧠 Sobriety Test App 🍻🚫
 
-A modern Android application built with **Jetpack Compose** that helps assess sobriety using interactive tests measuring **reaction**, **memory**, and **balance**. This app uses **Room** for persistent score tracking and follows **MVVM architecture** with **state management** via `ViewModel`. [Link to Notes & Resource Sheet](https://kingjulien1.notion.site/Final-Project-Sobriety-Tester-1ed86e6823a480aaa6c8dbe07d29b480?pvs=74)
+A modern Android application built with **Jetpack Compose** that helps assess sobriety using interactive tests measuring **reaction**, **memory**, and **balance**. This app uses **Room** for persistent score tracking and follows **MVVM architecture** with **state management** via `ViewModel`.
 
 ---
 
