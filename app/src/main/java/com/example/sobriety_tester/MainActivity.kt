@@ -39,8 +39,9 @@ class MainActivity : ComponentActivity() {
             val navController = rememberNavController()
             // initialize the ViewModel for managing app state
             val appViewModel: AppViewModel = viewModel()
+            val balanceViewModel: BalanceViewModel = viewModel()
 
-            SobrietyTestApp(navController, appViewModel)
+            SobrietyTestApp(navController, appViewModel, balanceViewModel)
         }
     }
 }
@@ -54,12 +55,12 @@ class MainActivity : ComponentActivity() {
  * @param viewModel The ViewModel to manage app state and data.
  */
 @Composable
-fun SobrietyTestApp(navController: NavHostController, viewModel: AppViewModel) {
+fun SobrietyTestApp(navController: NavHostController, viewModel: AppViewModel, balanceViewModel: BalanceViewModel) {
     NavHost(navController = navController, startDestination = "start") {
         composable("start") { StartScreen(navController) }
         composable("reaction_test") { ReactionTestScreen(navController, viewModel) }
         composable("memory_test") { MemoryTestScreen(navController, viewModel) }
-        composable("balance_test") { BalanceTestScreen(navController, viewModel) }
+        composable("balance_test") { BalanceTestScreen(navController, viewModel, balanceViewModel) }
         composable("reaction_score_screen") {
             // collect the last test score from the ViewModel
             // for the score screen to display the results of the reaction test
@@ -84,6 +85,19 @@ fun SobrietyTestApp(navController: NavHostController, viewModel: AppViewModel) {
                 nextRoute = "balance_test",
                 navController = navController,
                 title = "Memory Test Score"
+            )
+        }
+        composable("balance_score_screen") {
+            // collect the last test score from the ViewModel
+            // for the score screen to display the results of the reaction test
+            val score by viewModel.lastTestScore.collectAsState()
+            ScoreScreen(
+                score = score,
+                // calculate the maximum score based on the number of dots and the score per dot
+                maxScore = MAX_BALANCE_SCORE,
+                nextRoute = "final_result",
+                navController = navController,
+                title = "Balance Test Score"
             )
         }
         composable("final_result") { FinalResultScreen(viewModel) }

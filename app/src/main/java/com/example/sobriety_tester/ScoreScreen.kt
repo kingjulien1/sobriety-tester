@@ -81,7 +81,7 @@ fun ScoreScreen(
         }
 
         GreenActionButton(
-            text = "Next Test",
+            text = if(nextRoute== "final_result") "Final result" else"Next Test",
             onClick = { navController.navigate(nextRoute) },
             modifier = Modifier
                 .fillMaxWidth()
