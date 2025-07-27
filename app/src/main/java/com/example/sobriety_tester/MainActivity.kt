@@ -100,7 +100,7 @@ fun SobrietyTestApp(navController: NavHostController, viewModel: AppViewModel, b
                 title = "Balance Test Score"
             )
         }
-        composable("final_result") { FinalResultScreen(viewModel) }
+        composable("final_result") { FinalResultScreen(navController, viewModel) }
     }
 }
 

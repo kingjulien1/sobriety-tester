@@ -81,7 +81,7 @@ fun BalanceTestScreen(navController: NavController, viewModel: AppViewModel, gam
         }
     }
     if(testDone){
-        viewModel.recordTestScore(TestType.Reaction, score/100)
+        viewModel.recordTestScore(TestType.Balance, score/100)
         viewModel.persistScore(score)
         navController.navigate("balance_score_screen")
     }
