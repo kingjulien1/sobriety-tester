@@ -47,6 +47,8 @@ const val MAX_MEMORY_SCORE = TOTAL_ROUNDS * 20
 const val SIDE_PADDING = 300
 const val BOTTOM_PADDING = 500
 
+private const val description = "Repeat the dot sequence"
+
 /**
  * MemoryTestScreen - a memory game composable that displays a sequence of animated dots
  * for the user to memorize and then reproduce in order. Tapping in the wrong order ends the test.
@@ -239,15 +241,17 @@ fun MemoryTestScreen(navController: NavController, viewModel: AppViewModel) {
 
     // if the test has not started yet, show a countdown screen
     if (!testStarted) {
-        CountdownScreen {
+        CountdownScreen (
+            nextTestDesc = description,
+            onCountdownComplete = {
             // start the first round after countdown completion
             testStarted = true
             startNewRound()
-        }
+        })
     } else {
         StandardLayout(
             subheading = "Test 2 of 3",
-            heading = "Repeat the dot sequence - Level $currentRound"
+            heading = "${description} - Level $currentRound"
         ) {
             Box(
                 modifier = Modifier

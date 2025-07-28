@@ -3,9 +3,13 @@ package com.example.sobriety_tester
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -18,7 +22,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.example.sobriety_tester.ui.theme.GreenPrimary
 import kotlinx.coroutines.delay
@@ -35,7 +41,8 @@ import kotlinx.coroutines.delay
 @Composable
 fun CountdownTimer(
     seconds: Int = 3,
-    onFinished: () -> Unit
+    onFinished: () -> Unit,
+    nextTestDesc: String
 ) {
     // state variables to track the current second and elapsed time
     var currentSecond by remember { mutableStateOf(seconds) }
@@ -76,21 +83,34 @@ fun CountdownTimer(
         currentSecond = 0
         onFinished()
     }
-    Box(
-        modifier = Modifier.size(200.dp),
-        contentAlignment = Alignment.Center
-    ) {
-        CircularProgressIndicator(
-            progress = animatedProgress.coerceIn(0f, 1f),
-            strokeWidth = 20.dp,
-            modifier = Modifier.fillMaxSize(),
-            color = GreenPrimary
-        )
+    Column (
+        modifier = Modifier
+            .fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.SpaceEvenly
+    ){
         Text(
-            text = if (currentSecond > 0) "$currentSecond" else "Go!",
-            style = MaterialTheme.typography.headlineLarge.copy(fontWeight = FontWeight.Bold),
-            modifier = Modifier.scale(scale.value)
+            text = nextTestDesc,
+            style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
+            textAlign = TextAlign.Center
         )
+        Box(
+            modifier = Modifier.size(200.dp),
+            contentAlignment = Alignment.Center
+        ) {
+            CircularProgressIndicator(
+                progress = animatedProgress.coerceIn(0f, 1f),
+                strokeWidth = 20.dp,
+                modifier = Modifier.fillMaxSize(),
+                color = GreenPrimary
+            )
+            Text(
+                text = if (currentSecond > 0) "$currentSecond" else "Go!",
+                style = MaterialTheme.typography.headlineLarge.copy(fontWeight = FontWeight.Bold),
+                modifier = Modifier.scale(scale.value)
+            )
+        }
+        Spacer(modifier = Modifier.width(1.dp))
     }
 }
 
@@ -101,11 +121,11 @@ fun CountdownTimer(
  * @param onCountdownComplete Callback to invoke when the countdown completes.
  */
 @Composable
-fun CountdownScreen(onCountdownComplete: () -> Unit) {
+fun CountdownScreen(onCountdownComplete: () -> Unit, nextTestDesc: String = "") {
     StandardLayout(
         subheading = "Get Ready",
         heading = "Test starts soon"
     ) {
-        CountdownTimer(onFinished = onCountdownComplete)
+        CountdownTimer(onFinished = onCountdownComplete, nextTestDesc = nextTestDesc)
     }
 }

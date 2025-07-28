@@ -47,6 +47,8 @@ const val MAX_REACTION_TIME_MS = 2000f
 // this is the duration in milliseconds  the dot's sweep animation will take
 const val DOT_SWEEP_DURATION_MS = 1000
 
+private const val description = "tap the green dot as fast as you can"
+
 /**
  * this test measures reaction time.
  * Users must press $REACTION_TEST_DOTS number of randomly appearing dots on the screen
@@ -126,15 +128,17 @@ fun ReactionTestScreen(navController: NavController, viewModel: AppViewModel) {
 
     if (!testStarted) {
         // show a countdown before starting the test
-        CountdownScreen {
+        CountdownScreen (
+            nextTestDesc = description,
+            onCountdownComplete = {
             // start the reaction test after countdown
             testStarted = true
             showNextDot()
-        }
+        })
     } else {
         StandardLayout(
             subheading = "Test 1 of 3",
-            heading = "tap the green dot as fast as you can",
+            heading = "${description}",
         ) {
             Box(modifier = Modifier.fillMaxSize()) {
                 // check if the dot is visible and animate it in if it is
