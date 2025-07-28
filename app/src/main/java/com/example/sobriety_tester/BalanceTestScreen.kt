@@ -49,7 +49,7 @@ fun BalanceTestScreen(navController: NavController, viewModel: AppViewModel, gam
                 // Center marker
                 Box(
                     modifier = Modifier
-                        .size(30.dp)
+                        .size(50.dp)
                         .align(Alignment.Center)
                         .background(Color.Black, shape = CircleShape)
                 )
@@ -64,7 +64,7 @@ fun BalanceTestScreen(navController: NavController, viewModel: AppViewModel, gam
                             )
                         }
                         .align(Alignment.Center)
-                        .size(30.dp)
+                        .size(50.dp)
                         .background(GreenPrimary, shape = CircleShape)
                 )
                 /*
