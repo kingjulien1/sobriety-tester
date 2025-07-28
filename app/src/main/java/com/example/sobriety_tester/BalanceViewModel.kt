@@ -13,7 +13,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlin.math.max
 
 private const val duration = 600 // Run for ~5s at 60fps
-const val MAX_BALANCE_SCORE = duration //100% accurate for 300 frames
+const val MAX_BALANCE_SCORE = duration-100 //100% accurate for 300 frames
 
 class BalanceViewModel(application: Application) : AndroidViewModel(application), SensorEventListener {
 
@@ -57,13 +57,15 @@ class BalanceViewModel(application: Application) : AndroidViewModel(application)
         val y = event.values[1]  // forward/backward tilt
 
         // Map the tilt to a screen offset (simplified and scaled)
-        val scaledOffset = Offset(x * 50, y * 50)
+        val scaledOffset = Offset(x * -50, y * 50)
         _dotPosition.value = scaledOffset
 
         // Score based on proximity to center (closer = better)
-        val distance = scaledOffset.getDistance()
-        val scoreDelta = max(0, (100 - distance).toInt())
-        _score.value += scoreDelta
+        if(frameCount>=100) {
+            val distance = scaledOffset.getDistance()
+            val scoreDelta = max(0, (100 - distance).toInt())
+            _score.value += scoreDelta
+        }
         frameCount++
 
         if (frameCount >= duration) stopGame()
