@@ -21,7 +21,7 @@ import androidx.navigation.NavController
 import com.example.sobriety_tester.ui.theme.GreenPrimary
 import kotlin.math.roundToInt
 
-private const val description = "balance the green dot in the middle"
+private const val description = "Balance the green Dot in the Middle"
 
 @Composable
 fun BalanceTestScreen(navController: NavController, viewModel: AppViewModel, gameViewModel: BalanceViewModel) {

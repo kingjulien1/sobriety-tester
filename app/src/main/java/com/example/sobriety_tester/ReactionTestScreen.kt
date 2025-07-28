@@ -47,7 +47,7 @@ const val MAX_REACTION_TIME_MS = 2000f
 // this is the duration in milliseconds  the dot's sweep animation will take
 const val DOT_SWEEP_DURATION_MS = 1000
 
-private const val description = "tap the green dot as fast as you can"
+private const val description = "Tap the green Circles as fast as you can"
 
 /**
  * this test measures reaction time.

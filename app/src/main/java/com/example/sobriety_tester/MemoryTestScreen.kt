@@ -47,7 +47,8 @@ const val MAX_MEMORY_SCORE = TOTAL_ROUNDS * 20
 const val SIDE_PADDING = 300
 const val BOTTOM_PADDING = 500
 
-private const val description = "Repeat the dot sequence"
+private const val defaultdesc = "Repeat the Circle Sequence"
+private const val altdesc = "Memorize the Sequence"
 
 /**
  * MemoryTestScreen - a memory game composable that displays a sequence of animated dots
@@ -97,6 +98,8 @@ fun MemoryTestScreen(navController: NavController, viewModel: AppViewModel) {
     // animatable states for the dot sweep animation and tapped dots
     val dotSweepMap = remember { mutableStateMapOf<Offset, Float>() }
 
+    var description by remember { mutableStateOf(altdesc) }
+
     /**
      * generates a random dot position on the screen, avoiding overlap with existing dots.
      * it will retry up to 100 times to find a valid position that does not overlap with existing dots.
@@ -139,6 +142,8 @@ fun MemoryTestScreen(navController: NavController, viewModel: AppViewModel) {
      * and waits for a short delay before moving to the next dot.
      */
     fun playSequence() {
+        //tell user to wait and memorize
+        description = altdesc
         showingSequence = true
         // turn off user input while the sequence is being shown
         userTurn = false
@@ -172,6 +177,8 @@ fun MemoryTestScreen(navController: NavController, viewModel: AppViewModel) {
             delay(300)
             showingSequence = false
             userTurn = true
+            //tell the user they can input
+            description = defaultdesc
         }
     }
 
@@ -242,7 +249,7 @@ fun MemoryTestScreen(navController: NavController, viewModel: AppViewModel) {
     // if the test has not started yet, show a countdown screen
     if (!testStarted) {
         CountdownScreen (
-            nextTestDesc = description,
+            nextTestDesc = defaultdesc,
             onCountdownComplete = {
             // start the first round after countdown completion
             testStarted = true
