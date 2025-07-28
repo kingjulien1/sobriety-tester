@@ -1,12 +1,8 @@
 package com.example.sobriety_tester
 
-import android.widget.Space
-import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.animateIntAsState
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -14,10 +10,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -36,9 +28,9 @@ import androidx.navigation.NavController
 import com.example.sobriety_tester.ui.theme.GreenPrimary
 import com.example.sobriety_tester.ui.theme.RedPrimary
 import kotlinx.coroutines.delay
-import org.intellij.lang.annotations.JdkConstants.HorizontalAlignment
 
-private const val threashhold = 80
+//threshold where sober/not sober starts
+private const val threshold = 80
 
 /**
  * FinalResultScreen displays the user's scores after completing all test.
@@ -47,15 +39,18 @@ private const val threashhold = 80
  */
 @Composable
 fun FinalResultScreen(navController: NavController, viewModel: AppViewModel) {
+    //individual scores
     val reactionScore = viewModel.reactionScore.collectAsState()
     val memoryScore = viewModel.memoryScore.collectAsState()
     val balanceScore = viewModel.balanceScore.collectAsState()
 
+    //individual percentages
     val reactionPercentage = 100 * reactionScore.value / (MAX_SCORE_PER_DOT * REACTION_TEST_DOTS)
     val memoryPercentage = 100 * memoryScore.value / (MAX_MEMORY_SCORE)
     val balancePercentage = 100 * balanceScore.value / (MAX_BALANCE_SCORE)
 
-    var total = reactionPercentage + memoryPercentage + balancePercentage
+    //total score
+    val total = reactionPercentage + memoryPercentage + balancePercentage
 
     Column(
         modifier = Modifier
@@ -78,7 +73,7 @@ fun FinalResultScreen(navController: NavController, viewModel: AppViewModel) {
                 modifier = Modifier.padding(bottom = 32.dp)
             )
         }
-        Column (
+        Column(
             modifier = Modifier
                 .weight(1f)
                 .fillMaxWidth(),
@@ -96,21 +91,23 @@ fun FinalResultScreen(navController: NavController, viewModel: AppViewModel) {
                     test = "Reaction",
                     score = reactionScore.value,
                     total = MAX_SCORE_PER_DOT * REACTION_TEST_DOTS,
-                    if(reactionPercentage < threashhold)RedPrimary else GreenPrimary
+                    if (reactionPercentage < threshold) RedPrimary else GreenPrimary
                 ) //300
                 TextOnlyScore(
                     test = "Memory",
                     score = memoryScore.value,
                     total = MAX_MEMORY_SCORE,
-                    if(memoryPercentage < threashhold)RedPrimary else GreenPrimary
+                    if (memoryPercentage < threshold) RedPrimary else GreenPrimary
                 ) //100
                 TextOnlyScore(
                     test = "Balance",
                     score = balanceScore.value,
                     total = MAX_BALANCE_SCORE,
-                    if(balancePercentage < threashhold)RedPrimary else GreenPrimary
-                ) //300
+                    if (balancePercentage < threshold) RedPrimary else GreenPrimary
+                ) //500
             }
+
+            //display Total score indicator
             Column(
                 modifier = Modifier
                     .fillMaxWidth(),
@@ -123,22 +120,29 @@ fun FinalResultScreen(navController: NavController, viewModel: AppViewModel) {
                     fontWeight = FontWeight.Bold,
                 )
                 Spacer(modifier = Modifier.height(8.dp))
-                SimpleScoreIndicator(total, 300, if(total/3 < threashhold)RedPrimary else GreenPrimary)
+                SimpleScoreIndicator(
+                    total,
+                    300,
+                    if (total / 3 < threshold) RedPrimary else GreenPrimary
+                )
             }
+
+            //Test result sober/not sober
             Text(
-                text = "you are ${if(total/3 < threashhold) "not " else ""}sober",
+                text = "you are ${if (total / 3 < threshold) "not " else ""}sober",
                 style = MaterialTheme.typography.headlineSmall,
                 textAlign = TextAlign.Center,
                 fontWeight = FontWeight.Bold,
-                color = if(total/3 < threashhold)RedPrimary else GreenPrimary
+                color = if (total / 3 < threshold) RedPrimary else GreenPrimary
             )
         }
-            GreenActionButton(
-                text = "Return to start",
-                onClick = { navController.navigate("start") },
-                modifier = Modifier
-                    .fillMaxWidth()
-            )
+        //back to start button
+        GreenActionButton(
+            text = "Return to start",
+            onClick = { navController.navigate("start") },
+            modifier = Modifier
+                .fillMaxWidth()
+        )
 
     }
 }
@@ -168,15 +172,16 @@ fun TextOnlyScore(test: String, score: Int, total: Int, color: Color = GreenPrim
     Column (
         horizontalAlignment = Alignment.CenterHorizontally
     ){
+        //name of the corresponding test
         Text(
-            text = "$test",
+            text = test,
             style = MaterialTheme.typography.headlineSmall,
             textAlign = TextAlign.Center,
             fontWeight = FontWeight.Bold,
         )
 
         Spacer(modifier = Modifier.height(8.dp))
-
+        //test result x/y
         Text(
             text = "$animatedScore / $total",
             style = MaterialTheme.typography.headlineSmall,
@@ -185,7 +190,7 @@ fun TextOnlyScore(test: String, score: Int, total: Int, color: Color = GreenPrim
         )
 
         Spacer(modifier = Modifier.height(8.dp))
-
+        //test result %
         Text(
             text = "$percentage%",
             style = MaterialTheme.typography.titleLarge.copy(

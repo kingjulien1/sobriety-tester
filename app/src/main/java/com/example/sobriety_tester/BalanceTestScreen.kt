@@ -67,6 +67,7 @@ fun BalanceTestScreen(navController: NavController, viewModel: AppViewModel, gam
                         .size(30.dp)
                         .background(GreenPrimary, shape = CircleShape)
                 )
+                /*
                 Text(
                     text = "Score: $score",
                     color = Color.White,
@@ -75,10 +76,11 @@ fun BalanceTestScreen(navController: NavController, viewModel: AppViewModel, gam
                         .align(Alignment.TopCenter)
                         .padding(top = 32.dp)
                 )
+                */
             }
         }
     }
-
+    //when the test is done - save the score and reset the test, then move to the score screen
     if (testDone) {
         viewModel.recordTestScore(TestType.Balance, score / 100)
         viewModel.persistScore(score)
