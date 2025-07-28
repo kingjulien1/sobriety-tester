@@ -23,16 +23,17 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.example.sobriety_tester.ui.theme.GreenPrimary
 import kotlin.math.roundToInt
 
 @Composable
 fun BalanceTestScreen(navController: NavController, viewModel: AppViewModel, gameViewModel: BalanceViewModel) {
     val dotOffset by gameViewModel.dotPosition.collectAsState()
     val score by gameViewModel.score.collectAsState()
-    val testStarted by gameViewModel.testStarted.collectAsState()
+    val testRunning by gameViewModel.testRunning.collectAsState()
     val testDone by gameViewModel.testDone.collectAsState()
 
-    if (!testStarted) {
+    if (!testRunning) {
         // show a countdown before starting the test
         CountdownScreen {
             // start the balance test after countdown
@@ -53,7 +54,7 @@ fun BalanceTestScreen(navController: NavController, viewModel: AppViewModel, gam
                     modifier = Modifier
                         .size(30.dp)
                         .align(Alignment.Center)
-                        .background(Color.Red, shape = CircleShape)
+                        .background(Color.Black, shape = CircleShape)
                 )
 
                 // Moving dot based on sensor data
@@ -67,7 +68,7 @@ fun BalanceTestScreen(navController: NavController, viewModel: AppViewModel, gam
                         }
                         .align(Alignment.Center)
                         .size(30.dp)
-                        .background(Color.Green, shape = CircleShape)
+                        .background(GreenPrimary, shape = CircleShape)
                 )
                 Text(
                     text = "Score: $score",
@@ -80,9 +81,11 @@ fun BalanceTestScreen(navController: NavController, viewModel: AppViewModel, gam
             }
         }
     }
-    if(testDone){
-        viewModel.recordTestScore(TestType.Balance, score/100)
+
+    if (testDone) {
+        viewModel.recordTestScore(TestType.Balance, score / 100)
         viewModel.persistScore(score)
+        gameViewModel.resetGame()
         navController.navigate("balance_score_screen")
     }
 }

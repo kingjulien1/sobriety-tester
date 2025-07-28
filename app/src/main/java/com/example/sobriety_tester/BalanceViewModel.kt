@@ -12,7 +12,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlin.math.max
 
-private const val duration = 300 // Run for ~5s at 60fps
+private const val duration = 600 // Run for ~5s at 60fps
 const val MAX_BALANCE_SCORE = duration //100% accurate for 300 frames
 
 class BalanceViewModel(application: Application) : AndroidViewModel(application), SensorEventListener {
@@ -26,32 +26,32 @@ class BalanceViewModel(application: Application) : AndroidViewModel(application)
     private val _score = MutableStateFlow(0)
     val score: StateFlow<Int> = _score
 
-    private var _testStarted = MutableStateFlow(false)
-    val testStarted: StateFlow<Boolean> = _testStarted
-
-
     private var _testDone = MutableStateFlow(false)
     val testDone: StateFlow<Boolean> = _testDone
 
-    private var `isRunning` = false
+    private var _isRunning = MutableStateFlow(false)
+    val testRunning: StateFlow<Boolean> = _isRunning
+
     private var frameCount = 0
 
     fun startGame() {
         sensorManager.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_GAME)
-        isRunning = true
-        _testStarted.value = true
+        _isRunning.value = true
         _score.value = 0
         frameCount = 0
     }
 
     fun stopGame() {
-        isRunning = false
+        _isRunning.value = false
         sensorManager.unregisterListener(this)
         _testDone.value = true
     }
+    fun resetGame(){
+        _testDone.value = false
+    }
 
     override fun onSensorChanged(event: SensorEvent?) {
-        if (!isRunning || event == null) return
+        if (!_isRunning.value || event == null) return
 
         val x = event.values[0]  // left/right tilt
         val y = event.values[1]  // forward/backward tilt

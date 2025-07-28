@@ -118,6 +118,12 @@ fun FinalResultScreen(navController: NavController, viewModel: AppViewModel) {
                 Spacer(modifier = Modifier.height(8.dp))
                 SimpleScoreIndicator(total, 300)
             }
+            Text(
+                text = "you are ${if(total/3 < 80) "not " else ""}sober",
+                style = MaterialTheme.typography.headlineSmall,
+                textAlign = TextAlign.Center,
+                fontWeight = FontWeight.Bold,
+            )
         }
             GreenActionButton(
                 text = "Return to start",
