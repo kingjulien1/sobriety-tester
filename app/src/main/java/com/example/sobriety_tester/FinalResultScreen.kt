@@ -28,13 +28,17 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.sobriety_tester.ui.theme.GreenPrimary
+import com.example.sobriety_tester.ui.theme.RedPrimary
 import kotlinx.coroutines.delay
 import org.intellij.lang.annotations.JdkConstants.HorizontalAlignment
+
+private const val threashhold = 80
 
 /**
  * FinalResultScreen displays the user's scores after completing all test.
@@ -91,17 +95,20 @@ fun FinalResultScreen(navController: NavController, viewModel: AppViewModel) {
                 TextOnlyScore(
                     test = "Reaction",
                     score = reactionScore.value,
-                    total = MAX_SCORE_PER_DOT * REACTION_TEST_DOTS
+                    total = MAX_SCORE_PER_DOT * REACTION_TEST_DOTS,
+                    if(reactionPercentage < threashhold)RedPrimary else GreenPrimary
                 ) //300
                 TextOnlyScore(
                     test = "Memory",
                     score = memoryScore.value,
-                    total = MAX_MEMORY_SCORE
+                    total = MAX_MEMORY_SCORE,
+                    if(memoryPercentage < threashhold)RedPrimary else GreenPrimary
                 ) //100
                 TextOnlyScore(
                     test = "Balance",
                     score = balanceScore.value,
-                    total = MAX_BALANCE_SCORE
+                    total = MAX_BALANCE_SCORE,
+                    if(balancePercentage < threashhold)RedPrimary else GreenPrimary
                 ) //300
             }
             Column(
@@ -116,13 +123,14 @@ fun FinalResultScreen(navController: NavController, viewModel: AppViewModel) {
                     fontWeight = FontWeight.Bold,
                 )
                 Spacer(modifier = Modifier.height(8.dp))
-                SimpleScoreIndicator(total, 300)
+                SimpleScoreIndicator(total, 300, if(total/3 < threashhold)RedPrimary else GreenPrimary)
             }
             Text(
-                text = "you are ${if(total/3 < 80) "not " else ""}sober",
+                text = "you are ${if(total/3 < threashhold) "not " else ""}sober",
                 style = MaterialTheme.typography.headlineSmall,
                 textAlign = TextAlign.Center,
                 fontWeight = FontWeight.Bold,
+                color = if(total/3 < threashhold)RedPrimary else GreenPrimary
             )
         }
             GreenActionButton(
@@ -136,7 +144,7 @@ fun FinalResultScreen(navController: NavController, viewModel: AppViewModel) {
 }
 
 @Composable
-fun TextOnlyScore(test: String, score: Int, total: Int) {
+fun TextOnlyScore(test: String, score: Int, total: Int, color: Color = GreenPrimary) {
     val targetProgress = score.toFloat() / total.toFloat()
     val animatedProgress = remember { mutableStateOf(0f) }
 
@@ -182,7 +190,7 @@ fun TextOnlyScore(test: String, score: Int, total: Int) {
             text = "$percentage%",
             style = MaterialTheme.typography.titleLarge.copy(
                 fontWeight = FontWeight.Bold,
-                color = GreenPrimary
+                color = color
             )
         )
     }

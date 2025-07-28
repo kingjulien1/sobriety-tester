@@ -22,6 +22,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -81,7 +82,7 @@ fun ScoreScreen(
         }
 
         GreenActionButton(
-            text = if(nextRoute== "final_result") "Final result" else"Next Test",
+            text = if(nextRoute== "final_result") "Final result" else "Next Test",
             onClick = { navController.navigate(nextRoute) },
             modifier = Modifier
                 .fillMaxWidth()
@@ -97,7 +98,7 @@ fun ScoreScreen(
  * @param total The maximum possible score.
  */
 @Composable
-fun SimpleScoreIndicator(score: Int, total: Int) {
+fun SimpleScoreIndicator(score: Int, total: Int, color: Color = GreenPrimary ) {
     // calculate the target progress based on score and total
     val targetProgress = score.toFloat() / total.toFloat()
     val animatedProgress = remember { mutableStateOf(0f) }
@@ -138,7 +139,7 @@ fun SimpleScoreIndicator(score: Int, total: Int) {
             progress = progress,
             strokeWidth = 20.dp,
             modifier = Modifier.fillMaxSize(),
-            color = GreenPrimary
+            color = color
         )
 
         Column(
@@ -158,7 +159,7 @@ fun SimpleScoreIndicator(score: Int, total: Int) {
                 text = "$percentage%",
                 style = MaterialTheme.typography.titleLarge.copy(
                     fontWeight = FontWeight.Bold,
-                    color = GreenPrimary
+                    color = color
                 )
             )
         }
