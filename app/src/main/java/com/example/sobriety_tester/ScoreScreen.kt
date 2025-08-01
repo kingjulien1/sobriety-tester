@@ -29,6 +29,8 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.sobriety_tester.ui.theme.GreenPrimary
 import kotlinx.coroutines.delay
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.ui.graphics.lerp
 
 /**
  * ScoreScreen displays the user's score after completing a test.
@@ -82,7 +84,7 @@ fun ScoreScreen(
         }
 
         GreenActionButton(
-            text = if(nextRoute== "final_result") "Final result" else "Next Test",
+            text = if (nextRoute == "final_result") "Final result" else "Next Test",
             onClick = { navController.navigate(nextRoute) },
             modifier = Modifier
                 .fillMaxWidth()
@@ -98,38 +100,35 @@ fun ScoreScreen(
  * @param total The maximum possible score.
  */
 @Composable
-fun SimpleScoreIndicator(score: Int, total: Int, color: Color = GreenPrimary ) {
-    // calculate the target progress based on score and total
-    val targetProgress = score.toFloat() / total.toFloat()
+fun SimpleScoreIndicator(score: Int, total: Int) {
+    val targetProgress = (score.toFloat() / total).coerceIn(0f, 1f)
     val animatedProgress = remember { mutableStateOf(0f) }
 
-    // trigger animation 1 second after render
+    // Launch progress animation with delay
     LaunchedEffect(Unit) {
-        // wait for 1 second before starting the animation
-        // because of animations between screens, we want to give a little time
-        // so the user can see the (entire) animation
         delay(1000)
         animatedProgress.value = targetProgress
     }
 
-    // animate the progress value up to 'targetProgress'
-    // this will animate the progress from 0 to the target value over 1 second
+    // Animate progress circle
     val progress by animateFloatAsState(
         targetValue = animatedProgress.value,
         animationSpec = tween(durationMillis = 1000),
         label = "progressAnimation"
     )
 
-    // animate the score value based on the progress
-    // this will animate the score from 0 to the calculated score based on progress
+    // Animate score number
     val animatedScore by animateIntAsState(
         targetValue = (animatedProgress.value * total).toInt(),
         animationSpec = tween(durationMillis = 1000),
         label = "scoreAnimation"
     )
 
-    // simplified percentage calculation rounded to the nearest integer
-    val percentage = (targetProgress * 100).toInt()
+    // color interpolation based on score from red to green
+    // ✅ Use current animated progress value for color interpolation
+    val lowColor = Color(0xFFD32F2F)
+    val highColor = GreenPrimary
+    val currentColor = lerp(lowColor, highColor, progress)
 
     Box(
         contentAlignment = Alignment.Center,
@@ -139,7 +138,7 @@ fun SimpleScoreIndicator(score: Int, total: Int, color: Color = GreenPrimary ) {
             progress = progress,
             strokeWidth = 20.dp,
             modifier = Modifier.fillMaxSize(),
-            color = color
+            color = currentColor
         )
 
         Column(
@@ -156,10 +155,10 @@ fun SimpleScoreIndicator(score: Int, total: Int, color: Color = GreenPrimary ) {
             Spacer(modifier = Modifier.height(8.dp))
 
             Text(
-                text = "$percentage%",
+                text = "${(progress * 100).toInt()}%",
                 style = MaterialTheme.typography.titleLarge.copy(
                     fontWeight = FontWeight.Bold,
-                    color = color
+                    color = currentColor
                 )
             )
         }

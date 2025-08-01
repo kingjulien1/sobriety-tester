@@ -119,7 +119,6 @@ fun FinalResultScreen(navController: NavController, viewModel: AppViewModel) {
                 SimpleScoreIndicator(
                     total,
                     MAX_SCORE_TOTAL,
-                    if (total / 3 < threshold) RedPrimary else GreenPrimary
                 )
             }
 
