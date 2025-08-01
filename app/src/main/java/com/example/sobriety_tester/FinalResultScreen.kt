@@ -32,6 +32,8 @@ import kotlinx.coroutines.delay
 //threshold where sober/not sober starts
 private const val threshold = 80
 
+const val MAX_SCORE_TOTAL = MAX_SCORE_PER_DOT * REACTION_TEST_DOTS + MAX_MEMORY_SCORE + MAX_BALANCE_SCORE
+
 /**
  * FinalResultScreen displays the user's scores after completing all test.
  * It shows the scores, the maximum possible scores, the relative percentages, and the overall score
@@ -50,7 +52,7 @@ fun FinalResultScreen(navController: NavController, viewModel: AppViewModel) {
     val balancePercentage = 100 * balanceScore.value / (MAX_BALANCE_SCORE)
 
     //total score
-    val total = reactionPercentage + memoryPercentage + balancePercentage
+    val total = viewModel.totalScore.collectAsState().value
 
     Column(
         modifier = Modifier
@@ -65,12 +67,6 @@ fun FinalResultScreen(navController: NavController, viewModel: AppViewModel) {
                 text = "Testing Complete",
                 style = MaterialTheme.typography.labelLarge,
                 modifier = Modifier.padding(bottom = 4.dp)
-            )
-
-            Text(
-                text = "Final Score",
-                style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Bold),
-                modifier = Modifier.padding(bottom = 32.dp)
             )
         }
         Column(
@@ -122,7 +118,7 @@ fun FinalResultScreen(navController: NavController, viewModel: AppViewModel) {
                 Spacer(modifier = Modifier.height(8.dp))
                 SimpleScoreIndicator(
                     total,
-                    300,
+                    MAX_SCORE_TOTAL,
                     if (total / 3 < threshold) RedPrimary else GreenPrimary
                 )
             }
