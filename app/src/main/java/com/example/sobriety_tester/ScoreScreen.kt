@@ -31,6 +31,7 @@ import com.example.sobriety_tester.ui.theme.GreenPrimary
 import kotlinx.coroutines.delay
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.ui.graphics.lerp
+import com.example.sobriety_tester.ui.theme.RedPrimary
 
 /**
  * ScoreScreen displays the user's score after completing a test.
@@ -126,7 +127,7 @@ fun SimpleScoreIndicator(score: Int, total: Int) {
 
     // color interpolation based on score from red to green
     // ✅ Use current animated progress value for color interpolation
-    val lowColor = Color(0xFFD32F2F)
+    val lowColor = RedPrimary
     val highColor = GreenPrimary
     val currentColor = lerp(lowColor, highColor, progress)
 
