@@ -22,16 +22,14 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.sobriety_tester.ui.theme.GreenPrimary
-import kotlinx.coroutines.delay
-import androidx.compose.animation.animateColorAsState
-import androidx.compose.ui.graphics.lerp
 import com.example.sobriety_tester.ui.theme.RedPrimary
+import kotlinx.coroutines.delay
 
 /**
  * ScoreScreen displays the user's score after completing a test.
