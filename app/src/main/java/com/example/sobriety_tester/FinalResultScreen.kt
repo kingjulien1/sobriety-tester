@@ -1,5 +1,6 @@
 package com.example.sobriety_tester
 
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.animateIntAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Arrangement
@@ -21,6 +22,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -32,7 +34,8 @@ import kotlinx.coroutines.delay
 //threshold where sober/not sober starts
 private const val threshold = 80
 
-const val MAX_SCORE_TOTAL = MAX_SCORE_PER_DOT * REACTION_TEST_DOTS + MAX_MEMORY_SCORE + MAX_BALANCE_SCORE
+//final score is calculated from he percentages thus max is 3*100%
+const val MAX_SCORE_TOTAL = 300 //MAX_SCORE_PER_DOT * REACTION_TEST_DOTS + MAX_MEMORY_SCORE + MAX_BALANCE_SCORE
 
 /**
  * FinalResultScreen displays the user's scores after completing all test.
@@ -86,20 +89,17 @@ fun FinalResultScreen(navController: NavController, viewModel: AppViewModel) {
                 TextOnlyScore(
                     test = "Reaction",
                     score = reactionScore.value,
-                    total = MAX_SCORE_PER_DOT * REACTION_TEST_DOTS,
-                    if (reactionPercentage < threshold) RedPrimary else GreenPrimary
+                    total = MAX_SCORE_PER_DOT * REACTION_TEST_DOTS
                 ) //300
                 TextOnlyScore(
                     test = "Memory",
                     score = memoryScore.value,
-                    total = MAX_MEMORY_SCORE,
-                    if (memoryPercentage < threshold) RedPrimary else GreenPrimary
-                ) //100
+                    total = MAX_MEMORY_SCORE
+                    ) //100
                 TextOnlyScore(
                     test = "Balance",
                     score = balanceScore.value,
-                    total = MAX_BALANCE_SCORE,
-                    if (balancePercentage < threshold) RedPrimary else GreenPrimary
+                    total = MAX_BALANCE_SCORE
                 ) //500
             }
 
@@ -143,7 +143,7 @@ fun FinalResultScreen(navController: NavController, viewModel: AppViewModel) {
 }
 
 @Composable
-fun TextOnlyScore(test: String, score: Int, total: Int, color: Color = GreenPrimary) {
+fun TextOnlyScore(test: String, score: Int, total: Int) {
     val targetProgress = score.toFloat() / total.toFloat()
     val animatedProgress = remember { mutableStateOf(0f) }
 
@@ -156,14 +156,26 @@ fun TextOnlyScore(test: String, score: Int, total: Int, color: Color = GreenPrim
         animatedProgress.value = targetProgress
     }
 
+    // Animate percent
+    val progress by animateFloatAsState(
+        targetValue = animatedProgress.value,
+        animationSpec = tween(durationMillis = 1000),
+        label = "progressAnimation"
+    )
+
     val animatedScore by animateIntAsState(
         targetValue = (animatedProgress.value * total).toInt(),
         animationSpec = tween(durationMillis = 1000),
         label = "scoreAnimation"
     )
 
-    // simplified percentage calculation rounded to the nearest integer
-    val percentage = (targetProgress * 100).toInt()
+
+    // color interpolation based on score from red to green
+    // ✅ Use current animated progress value for color interpolation
+    val lowColor = RedPrimary
+    val highColor = GreenPrimary
+    val currentColor = lerp(lowColor, highColor, progress)
+
     Column (
         horizontalAlignment = Alignment.CenterHorizontally
     ){
@@ -187,10 +199,10 @@ fun TextOnlyScore(test: String, score: Int, total: Int, color: Color = GreenPrim
         Spacer(modifier = Modifier.height(8.dp))
         //test result %
         Text(
-            text = "$percentage%",
+            text = "${(progress*100).toInt()}%",
             style = MaterialTheme.typography.titleLarge.copy(
                 fontWeight = FontWeight.Bold,
-                color = color
+                color = currentColor
             )
         )
     }

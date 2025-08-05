@@ -1,20 +1,18 @@
 package com.example.sobriety_tester
 
-import androidx.compose.foundation.background
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.offset
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -29,6 +27,9 @@ fun BalanceTestScreen(navController: NavController, viewModel: AppViewModel, gam
     val score by gameViewModel.score.collectAsState()
     val testRunning by gameViewModel.testRunning.collectAsState()
     val testDone by gameViewModel.testDone.collectAsState()
+
+    // size of the circle
+    val dotSize = 80.dp
 
     if (!testRunning) {
         // show a countdown before starting the test
@@ -45,28 +46,50 @@ fun BalanceTestScreen(navController: NavController, viewModel: AppViewModel, gam
                 modifier = Modifier
                     .fillMaxSize()
             ) {
-
-                // Center marker
-                Box(
+                //Center Marker for reference
+                Canvas(
                     modifier = Modifier
-                        .size(50.dp)
+                        .size(dotSize)
                         .align(Alignment.Center)
-                        .background(Color.Black, shape = CircleShape)
-                )
+                ) {
+                    drawArc(
+                        color = Color.Black,
+                        startAngle = -90f,
+                        sweepAngle = 360f,
+                        useCenter = false,
+                        // draw the arc with a stroke style
+                        style = Stroke(
+                            width = size.minDimension * 0.2f,
+                            cap = StrokeCap.Round
+                        )
+                    )
+                }
 
-                // Moving dot based on sensor data
-                Box(
+                //Moving dot based on sensor data
+                Canvas(
                     modifier = Modifier
-                        .offset {
-                            IntOffset(
-                                x = dotOffset.x.roundToInt(),
-                                y = dotOffset.y.roundToInt()
-                            )
-                        }
-                        .align(Alignment.Center)
-                        .size(50.dp)
-                        .background(GreenPrimary, shape = CircleShape)
-                )
+                    .offset {
+                        IntOffset(
+                            x = dotOffset.x.roundToInt(),
+                            y = dotOffset.y.roundToInt()
+                        )
+                    }
+                    .align(Alignment.Center)
+                    .size(dotSize)
+                ) {
+                    drawArc(
+                        color = GreenPrimary,
+                        startAngle = -90f,
+                        sweepAngle = 360f,
+                        useCenter = false,
+                        // draw the arc with a stroke style
+                        style = Stroke(
+                            width = size.minDimension * 0.2f,
+                            cap = StrokeCap.Round
+                        )
+                    )
+
+                }
                 /*
                 Text(
                     text = "Score: $score",

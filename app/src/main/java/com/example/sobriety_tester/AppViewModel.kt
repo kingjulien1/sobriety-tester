@@ -51,11 +51,17 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
     private val _lastTestScore = MutableStateFlow(0)
     val lastTestScore: StateFlow<Int> = _lastTestScore
 
+    //individual percentages
+    private val reactionPercentage = 100 * reactionScore.value / (MAX_SCORE_PER_DOT * REACTION_TEST_DOTS)
+    private val memoryPercentage = 100 * memoryScore.value / (MAX_MEMORY_SCORE)
+    private val balancePercentage = 100 * balanceScore.value / (MAX_BALANCE_SCORE)
+
+
     // total score from all tests (can also be from Room if needed)
     val totalScore: StateFlow<Int> = combine(
         reactionScore, memoryScore, balanceScore
     ) { reaction, memory, balance ->
-        reaction + memory + balance
+        ((reaction*100/(MAX_SCORE_PER_DOT * REACTION_TEST_DOTS)) + (memory*100/MAX_MEMORY_SCORE) + (balance*100/MAX_BALANCE_SCORE))
     }.stateIn(viewModelScope, SharingStarted.Eagerly, 0)
 
     // called after each test to set the relevant score
