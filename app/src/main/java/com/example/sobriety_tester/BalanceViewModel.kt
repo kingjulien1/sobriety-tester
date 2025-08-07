@@ -13,7 +13,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlin.math.max
 
 private const val duration = 600 // Run for ~5s at 60fps
-const val MAX_BALANCE_SCORE = duration-100 //100% accurate for 300 frames
+const val MAX_BALANCE_SCORE = duration-100 //100% accurate for 500 frames
 
 class BalanceViewModel(application: Application) : AndroidViewModel(application), SensorEventListener {
 
@@ -25,6 +25,7 @@ class BalanceViewModel(application: Application) : AndroidViewModel(application)
     private val _dotPosition = MutableStateFlow(Offset(0f, 0f)) // x = left-right, y = up-down
     val dotPosition: StateFlow<Offset> = _dotPosition
 
+    //the score, increasing as the test progresses
     private val _score = MutableStateFlow(0)
     val score: StateFlow<Int> = _score
 
@@ -60,8 +61,9 @@ class BalanceViewModel(application: Application) : AndroidViewModel(application)
         _testDone.value = false
     }
 
+    //triggers whenever we get a "new" reading from the sensor > once per frame
     override fun onSensorChanged(event: SensorEvent?) {
-        //when the test is running and we are getting action/events/value changes from the sensor
+        //when the test is not running or we are not getting values from the sensor > stop
         if (!_isRunning.value || event == null) return
 
         val x = event.values[0]  // left/right tilt

@@ -80,7 +80,6 @@ fun SobrietyTestApp(navController: NavHostController, viewModel: AppViewModel, b
             val score by viewModel.lastTestScore.collectAsState()
             ScoreScreen(
                 score = score,
-                // calculate the maximum score based on the number of dots and the score per dot
                 maxScore = MAX_MEMORY_SCORE,
                 nextRoute = "balance_test",
                 navController = navController,
@@ -93,7 +92,6 @@ fun SobrietyTestApp(navController: NavHostController, viewModel: AppViewModel, b
             val score by viewModel.lastTestScore.collectAsState()
             ScoreScreen(
                 score = score,
-                // calculate the maximum score based on the number of dots and the score per dot
                 maxScore = MAX_BALANCE_SCORE,
                 nextRoute = "final_result",
                 navController = navController,

@@ -48,11 +48,6 @@ fun FinalResultScreen(navController: NavController, viewModel: AppViewModel) {
     val memoryScore = viewModel.memoryScore.collectAsState()
     val balanceScore = viewModel.balanceScore.collectAsState()
 
-    //individual percentages
-    val reactionPercentage = 100 * reactionScore.value / (MAX_SCORE_PER_DOT * REACTION_TEST_DOTS)
-    val memoryPercentage = 100 * memoryScore.value / (MAX_MEMORY_SCORE)
-    val balancePercentage = 100 * balanceScore.value / (MAX_BALANCE_SCORE)
-
     //total score
     val total = viewModel.totalScore.collectAsState().value
 
@@ -63,7 +58,7 @@ fun FinalResultScreen(navController: NavController, viewModel: AppViewModel) {
         verticalArrangement = Arrangement.SpaceBetween,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        // header area with title and subtitle
+        // header area with title
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Text(
                 text = "Testing Complete",
@@ -78,7 +73,7 @@ fun FinalResultScreen(navController: NavController, viewModel: AppViewModel) {
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.SpaceEvenly
         ) {
-            // content area with score indicator
+            // content area with score indicators for individual tests
             Row(
                 modifier = Modifier
                     .fillMaxWidth(),
@@ -161,7 +156,7 @@ fun TextOnlyScore(test: String, score: Int, total: Int) {
         animationSpec = tween(durationMillis = 1000),
         label = "progressAnimation"
     )
-
+    // animate points
     val animatedScore by animateIntAsState(
         targetValue = (animatedProgress.value * total).toInt(),
         animationSpec = tween(durationMillis = 1000),
@@ -170,7 +165,7 @@ fun TextOnlyScore(test: String, score: Int, total: Int) {
 
 
     // color interpolation based on score from red to green
-    // ✅ Use current animated progress value for color interpolation
+    // Use current animated progress value for color interpolation
     val lowColor = RedPrimary
     val highColor = GreenPrimary
     val currentColor = lerp(lowColor, highColor, progress)
